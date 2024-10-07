@@ -4,10 +4,13 @@ name: CI Workflow
 on:
   push:
     branches:
-      - main  # Change this if your default branch is master
+      - main
+      - Wins  # Add this line
   pull_request:
     branches:
       - main
+      - Wins  # Add this line
+
 
 jobs:
   build:
