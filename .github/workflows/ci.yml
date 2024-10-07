@@ -1,10 +1,7 @@
-name: CI for React and Django
+name: CI Workflow
 
 on:
   push:
-    branches:
-      - Wins
-  pull_request:
     branches:
       - Wins
 
@@ -13,33 +10,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
+    - name: Checkout code
       uses: actions/checkout@v2
 
     - name: Set up Node.js
       uses: actions/setup-node@v2
       with:
-        node-version: '16'
+        node-version: '14'
 
-    - name: Install frontend dependencies
-      working-directory: ./frontend # Adjust this if your React app is in a different directory
-      run: |
-        npm install
-        npm run build
+    - name: Change directory to frontend
+      run: cd frontend
 
-    - name: Set up Python
-      uses: actions/setup-python@v2
-      with:
-        python-version: '3.9' # Adjust according to your Django version
-
-    - name: Install backend dependencies
-      working-directory: ./backend # Adjust this if your Django app is in a different directory
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Run tests
-      working-directory: ./backend # Adjust this if your Django app is in a different directory
-      run: |
-        python manage.py test
- 
+    - name: Install dependencies
+      run: npm install
