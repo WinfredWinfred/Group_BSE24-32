@@ -1,20 +1,17 @@
-name: CI Workflow
+name: Full Stack CI Workflow
 
-# Triggers the workflow on push or pull request to the main branch
 on:
   push:
     branches:
-      - main
-      - Wins  # Add this line
+      - main  # or whichever branch you're working on
   pull_request:
     branches:
       - main
-      - Wins  # Add this line
-
 
 jobs:
-  build:
-    runs-on: ubuntu-latest  # This specifies the OS to run the workflow
+  frontend:
+    name: Frontend (React)
+    runs-on: ubuntu-latest
 
     steps:
       # Step 1: Checkout the code
@@ -25,20 +22,79 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14'  # Specify the Node.js version you need
+          node-version: '14'
 
       # Step 3: Install dependencies
-      - name: Install dependencies
+      - name: Install frontend dependencies
         run: npm install
+        working-directory: ./frontend  # Adjust if your React code is in a different directory
 
       # Step 4: Build the project
-      - name: Build project
-        run: npm run build  # Customize this command based on your build script
+      - name: Build frontend
+        run: npm run build
+        working-directory: ./frontend
 
       # Step 5: Run tests
-      - name: Run tests
-        run: npm test  # This assumes you have a test script defined in package.json
+      - name: Run frontend tests
+        run: npm test
+        working-directory: ./frontend
 
-      # Step 6: Run ESLint for code quality
+      # Step 6: Lint code
       - name: Run ESLint
-        run: npm run lint  # Make sure you have ESLint set up and a lint script defined
+        run: npm run lint
+        working-directory: ./frontend
+
+  backend:
+    name: Backend (Django)
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:  # Assuming you're using PostgreSQL as the DB
+        image: postgres:latest
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mydb
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/mydb
+
+    steps:
+      # Step 1: Checkout the code
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Step 2: Set up Python
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      # Step 3: Install backend dependencies
+      - name: Install backend dependencies
+        run: |
+          python -m venv venv
+          . venv/bin/activate
+          pip install -r ./backend/requirements.txt
+        working-directory: ./backend
+
+      # Step 4: Run database migrations
+      - name: Run migrations
+        run: |
+          . venv/bin/activate
+          python manage.py migrate
+        working-directory: ./backend
+
+      # Step 5: Run backend tests
+      - name: Run backend tests
+        run: |
+          . venv/bin/activate
+          python manage.py test
+        working-directory: ./backend
