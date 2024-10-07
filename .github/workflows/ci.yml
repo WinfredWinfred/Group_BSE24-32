@@ -1,6 +1,3 @@
-<<<<<<< HEAD
- 
-=======
 name: CI Workflow
 
 # Triggers the workflow on push or pull request to the main branch
@@ -42,4 +39,3 @@ jobs:
       # Step 6: Run ESLint for code quality
       - name: Run ESLint
         run: npm run lint  # Make sure you have ESLint set up and a lint script defined
->>>>>>> 55d6178f4a5a1a36116e2f91bc6cd5e74d54dec8
