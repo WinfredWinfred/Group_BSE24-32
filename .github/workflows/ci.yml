@@ -3,9 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - Wins
-  pull_request:
-    branches:
+      - main
       - Wins
 
 jobs:
@@ -13,25 +11,25 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Check out code
+      - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '14' # or the version of Node.js you're using
+          node-version: '14' # Adjust the Node.js version if needed
 
       - name: Install dependencies
         run: |
-          cd src  # Change directory to the src folder where your frontend code is
+          cd src # Navigate to your frontend directory
           npm install
 
-      - name: Build frontend
+      - name: Build
         run: |
-          cd src  # Change directory to the src folder where your frontend code is
+          cd src # Navigate to your frontend directory
           npm run build
 
       - name: Run tests
         run: |
-          cd src  # Change directory to the src folder where your frontend code is
-          npm test -- --watchAll=false # Run tests without watch mode
+          cd src # Navigate to your frontend directory
+          npm test -- --watchAll=false
